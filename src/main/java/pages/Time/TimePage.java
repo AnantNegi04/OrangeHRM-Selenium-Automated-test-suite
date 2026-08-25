@@ -5,6 +5,8 @@ import pages.BaseComponents.BasePage;
 import pages.BaseComponents.SideBar;
 import pages.Time.Components.TopBarMenu;
 import pages.Time.NavPages.*;
+import pages.Time.NavPages.Timesheets.EmployeeTimesheets;
+import pages.Time.NavPages.Timesheets.MyTimesheets;
 
 public class TimePage extends BasePage {
 
