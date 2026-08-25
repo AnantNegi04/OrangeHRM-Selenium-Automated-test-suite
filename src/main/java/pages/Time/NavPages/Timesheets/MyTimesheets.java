@@ -8,6 +8,8 @@ import pages.Time.Components.TopBarMenu;
 import pages.Time.TimePage;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.Scanner;
 
 public class MyTimesheets extends BasePage {
 
@@ -18,8 +20,7 @@ public class MyTimesheets extends BasePage {
     private By editButton = By.xpath("//button[contains(@class, 'oxd-button--ghost')]");
     private By submitButton = By.xpath("//button[contains(@class, 'oxd-button--secondary')]");
     private By allRows = By.xpath("//tr[contains(@class, 'orangehrm-timesheet-table-body-row')]");
-    private By deleteRow = By.cssSelector("i.bi-trash");
-    private By addRow = By.cssSelector("i.bi-plus");
+    private Scanner scanner = new Scanner(System.in);
 
     public MyTimesheets(WebDriver driver) {
         super(driver);
@@ -35,20 +36,16 @@ public class MyTimesheets extends BasePage {
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("oxd-layout-container")));
     }
 
-    private Rows getRow(int index) {
-        List<WebElement> rows = driver.findElements(allRows);
-
-        return new Rows(driver, rows.get(index));
-    }
-
     public void fillRows(int index, String project, String option, String comment) {
         wait.until(ExpectedConditions.elementToBeClickable(allRows));
         getRow(index).fillTimesheet(project, option, comment);
+        getElement(submitButton).click();
     }
 
     private class Rows {
         private WebDriver driver;
         private WebElement row;
+        private int index;
 
         private By project = By.xpath(".//input[@placeholder='Type for hints...']");
         private By autocomplete = By.cssSelector("div[role='listbox'][class*='oxd-autocomplete-dropdown']");
@@ -63,19 +60,26 @@ public class MyTimesheets extends BasePage {
         private By saveComment = By.xpath("//div[contains(@class,'oxd-form-actions')]//button[@type='submit']");
         private By cancelComment = By.xpath("//div[contains(@class,'oxd-form-actions')]//button[@type='button']");
         private By commentModal = By.xpath("//div[@role='document']");
+        private By deleteRow = By.cssSelector("i.bi-trash");
+        private By addRow = By.cssSelector("i.bi-plus");
 
         private WebElement getPageElement(By locator) {
             return driver.findElement(locator);
         }
 
-        public Rows(WebDriver driver, WebElement row) {
+        public Rows(WebDriver driver, int index) {
             this.driver = driver;
-            this.row = row;
+            this.index = index;
         }
 
-        public WebElement getRowElement(By locator) {
-            return row.findElement(locator);
+        private WebElement getRow() {
+            return driver.findElements(allRows).get(index);
         }
+
+        private WebElement getRowElement(By locator) {
+            return getRow().findElement(locator);
+        }
+
 
         private void clearInput(By locator) {
             WebElement element = getElement(locator);
@@ -84,15 +88,24 @@ public class MyTimesheets extends BasePage {
             element.sendKeys(Keys.BACK_SPACE);
         }
 
-        private void selectProject(String projectName) {
-            clearInput(project);
-            WebElement input = row.findElement(project);
-            input.click();
-            input.sendKeys("a");
+        private void waitForAutocompleteReset() {
+            try {
+                Thread.sleep(300);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                throw new RuntimeException(e);
+            }
+        }
 
-            wait.until(
-                    ExpectedConditions.visibilityOfElementLocated(autocomplete)
-            );
+        private void selectProject(String projectName) {
+            WebElement input = getRowElement(project);
+
+            clearInput(project);
+
+            waitForAutocompleteReset();
+
+            input = getRowElement(project);
+            input.sendKeys("a");
 
             WebElement option = wait.until(
                     ExpectedConditions.elementToBeClickable(
@@ -106,7 +119,7 @@ public class MyTimesheets extends BasePage {
         private By projectOption(String projectName) {
             return By.xpath(
                     "//div[@role='listbox']//div[@role='option']" +
-                            "[normalize-space()='" + projectName + "']"
+                            "[.//span[normalize-space()='" + projectName + "']]"
             );
         }
 
@@ -128,11 +141,23 @@ public class MyTimesheets extends BasePage {
         }
 
         private void fillTime(String comment) {
-            List<WebElement> elements = row.findElements(inputActivity);
 
-            for (WebElement element : elements) {
-                element.click();
-                element.sendKeys("9");
+            int count = row.findElements(inputActivity).size();
+
+            for (int i = 0; i < count; i++) {
+                List<WebElement> inputs = row.findElements(inputActivity);
+                WebElement element = inputs.get(i);
+
+                wait.until(driver -> {
+                    try {
+                        element.click();
+                        element.sendKeys("9");
+                        return true;
+                    } catch (StaleElementReferenceException e) {
+                        return false;
+                    }
+                });
+
                 fillComment(comment);
             }
         }
@@ -153,10 +178,6 @@ public class MyTimesheets extends BasePage {
             getPageElement(commentButton).click();
         }
 
-        private void enterComment(String comment) {
-            getPageElement(commentBox).sendKeys(comment);
-        }
-
         private void saveComment() {
             getPageElement(saveComment).click();
         }
@@ -167,19 +188,42 @@ public class MyTimesheets extends BasePage {
 
         public void fillComment(String comment) {
             comment();
-            wait.until(ExpectedConditions.elementToBeClickable(commentBox)).click();
-            enterComment(comment);
+
+            wait.until(
+                    ExpectedConditions.visibilityOfElementLocated(commentBox)
+            );
+
+            WebElement box = wait.until(
+                    ExpectedConditions.elementToBeClickable(commentBox)
+            );
+
+            box.sendKeys(comment);
+
             saveComment();
+
             wait.until(
                     ExpectedConditions.invisibilityOfElementLocated(commentModal)
             );
+        }
+
+        private void saveRow() {
+            getPageElement(saveButton).click();
+            wait.until(
+                    ExpectedConditions.visibilityOfElementLocated(allRows)
+            );
+        }
+
+        private void addRow() {
+            getRowElement(addRow).click();
         }
 
         public void fillTimesheet(String projectName, String option, String comment) {
             selectProject(projectName);
             selectActivity(option);
             fillTime(comment);
-            wait.until(ExpectedConditions.elementToBeClickable(saveButton)).click();
+            wait.until(
+                    ExpectedConditions.elementToBeClickable(saveButton)
+            ).click();
         }
     }
 }

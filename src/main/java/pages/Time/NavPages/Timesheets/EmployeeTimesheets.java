@@ -1,4 +1,4 @@
-package pages.Time.NavPages;
+package pages.Time.NavPages.Timesheets;
 
 import org.openqa.selenium.WebDriver;
 import pages.BaseComponents.BasePage;
