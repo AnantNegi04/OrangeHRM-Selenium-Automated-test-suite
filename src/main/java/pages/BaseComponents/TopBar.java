@@ -30,21 +30,19 @@ public class TopBar {
         driver.findElement(drowpDown).click();
     }
 
-    private List<WebElement> dropdownList(){
-        clickDropDown();
-        wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(dropDownList));
-        return driver.findElements(dropDownList);
+    private By dropdownList(String item){
+        return By.xpath(
+                "//a[@role='menuitem']" +
+                "[normalize-space()='" + item + "']"
+        );
     }
 
-    public WebElement getDropDownItem(String item) {
-        List<WebElement> dropdownList = dropdownList();
-        for (WebElement element : dropdownList) {
-            if (element.getText().equals(item)) {
-                return element;
-            }
-        }
-        throw new NoSuchElementException(
-                "No such element found in dropdown list: " + item
+    public void getDropDownItem(String item) {
+        clickDropDown();
+        WebElement option = wait.until(
+                ExpectedConditions.elementToBeClickable(dropdownList(item))
         );
+
+        option.click();
     }
 }
