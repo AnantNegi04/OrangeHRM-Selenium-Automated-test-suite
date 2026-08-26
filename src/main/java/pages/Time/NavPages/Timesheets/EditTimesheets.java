@@ -127,11 +127,11 @@ public class EditTimesheets extends BasePage {
             int count = getRow().findElements(inputActivity).size();
 
             for (int i = 0; i < count - 1; i++) {
-                List<WebElement> inputs = getRow().findElements(inputActivity);
-                WebElement element = inputs.get(i);
-
+                int finalI = i;
                 wait.until(driver -> {
                     try {
+                        WebElement element = getRow().findElements(inputActivity).get(finalI);
+
                         element.click();
                         element.sendKeys("9");
                         return true;
@@ -163,10 +163,6 @@ public class EditTimesheets extends BasePage {
 
         private void fillComment(String comment) {
             comment();
-
-//            wait.until(
-//                    ExpectedConditions.visibilityOfElementLocated(commentBox)
-//            );
 
             WebElement box = wait.until(
                     ExpectedConditions.elementToBeClickable(commentBox)
