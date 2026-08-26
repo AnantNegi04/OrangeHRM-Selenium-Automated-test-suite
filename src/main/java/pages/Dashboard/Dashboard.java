@@ -24,4 +24,9 @@ public class Dashboard extends BasePage {
         SideBar sideBar = new SideBar(driver);
         return sideBar.goToTimePage();
     }
+
+    public void logOut() {
+        topBar = new TopBar(driver);
+        topBar.getDropDownItem("Logout");
+    }
 }
