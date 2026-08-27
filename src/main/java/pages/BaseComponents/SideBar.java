@@ -40,31 +40,40 @@ public class SideBar extends BasePage{
         }
     }
 
+    private WebElement getElement(By locator) {
+        return driver.findElement(locator);
+    }
+
+    private WebElement searchResult(String searchText) {
+        driver.findElement(search).sendKeys(searchText);
+
+        wait.until(
+                ExpectedConditions.visibilityOfElementLocated(menuItems)
+        );
+
+        return getElement(menuItems);
+    }
+
     private boolean isSideBarExpanded() {
         return !driver.findElements(sideBarToggleLeft).isEmpty();
     }
 
-    private List<WebElement> getSideBarElements() {
-        expandSideBar();
-        return driver.findElements(menuItems);
-    }
-
-    private WebElement getSideBarItems(String item) {
-        List<WebElement> sideBarItems = getSideBarElements();
-
-        for (WebElement val : sideBarItems) {
-
-            if (val.getText().equals(item)) {
-                return val;
-            }
-        }
-        throw new NoSuchElementException(
-                "No side bar item found with the item: " + item
+    private By getSideBarElement(String item) {
+        return By.xpath(
+                "//a[contains(@class, 'oxd-main-menu-item')]" +
+                "//span[normalize-space()='" + item + "']"
         );
     }
 
     private void navigate(String item) {
-        getSideBarItems(item).click();
+        expandSideBar();
+
+        WebElement element = wait.until(
+                ExpectedConditions.elementToBeClickable(getSideBarElement(item))
+        );
+
+        element.click();
+
         wait.until(
                 ExpectedConditions.visibilityOfAllElementsLocatedBy(
                         By.className("oxd-layout-container")
@@ -98,7 +107,7 @@ public class SideBar extends BasePage{
     }
 
     public MaintenancePage goToMaintenancePage() {
-        getSideBarItems("Maintenance").click();
+        navigate("Maintenance");
         return new MaintenancePage(driver);
     }
 
