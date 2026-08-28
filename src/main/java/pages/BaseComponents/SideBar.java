@@ -1,6 +1,7 @@
 package pages.BaseComponents;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -44,13 +45,29 @@ public class SideBar extends BasePage{
         return driver.findElement(locator);
     }
 
+    private void typeSearchText(String searchText) {
+        expandSideBar();
+        WebElement input = driver.findElement(search);
+        input.clear();
+        input.sendKeys(searchText);
+    }
+
+    public boolean searchHasNoResults(String searchText) {
+        typeSearchText(searchText);
+        try {
+            return wait.until(d -> d.findElements(menuItems).isEmpty());
+        } catch (TimeoutException e) {
+            return false;
+        }
+    }
+
     private WebElement searchResult(String searchText) {
-        driver.findElement(search).sendKeys(searchText);
-
-        wait.until(
-                ExpectedConditions.visibilityOfElementLocated(menuItems)
-        );
-
+        typeSearchText(searchText);
+        try {
+            wait.until(ExpectedConditions.visibilityOfElementLocated(menuItems));
+        } catch (TimeoutException e) {
+            throw new NoSuchElementException("No search results found for: " + searchText);
+        }
         return getElement(menuItems);
     }
 
@@ -79,6 +96,10 @@ public class SideBar extends BasePage{
                         By.className("oxd-layout-container")
                 )
         );
+    }
+
+    public void navigateToMenuItem(String item) {
+        navigate(item);
     }
 
     public AdminPage goToAdminPage() {
