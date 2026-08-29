@@ -36,6 +36,7 @@ public class SideBar extends BasePage{
     }
 
     private void expandSideBar() {
+        System.out.println(isSideBarExpanded());
         if (!isSideBarExpanded()) {
             wait.until(ExpectedConditions.elementToBeClickable(sideBarToggle)).click();
         }
@@ -71,7 +72,20 @@ public class SideBar extends BasePage{
         return getElement(menuItems);
     }
 
+    public void collapseSideBar() {
+        if (isSideBarExpanded()) {
+            wait.until(ExpectedConditions.elementToBeClickable(sideBarToggle)).click();
+        }
+    }
+
+    public void searchAndNavigate(String searchText) {
+        WebElement result = searchResult(searchText);
+        result.click();
+        wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.className("oxd-layout-container")));
+    }
+
     private boolean isSideBarExpanded() {
+        wait.until(ExpectedConditions.visibilityOfElementLocated(sideBarToggle));
         return !driver.findElements(sideBarToggleLeft).isEmpty();
     }
 
@@ -85,6 +99,7 @@ public class SideBar extends BasePage{
     private void navigate(String item) {
         expandSideBar();
 
+
         WebElement element = wait.until(
                 ExpectedConditions.elementToBeClickable(getSideBarElement(item))
         );
@@ -93,7 +108,7 @@ public class SideBar extends BasePage{
 
         wait.until(
                 ExpectedConditions.visibilityOfAllElementsLocatedBy(
-                        By.className("oxd-layout-container")
+                        By.id("app")
                 )
         );
     }
@@ -129,6 +144,9 @@ public class SideBar extends BasePage{
 
     public MaintenancePage goToMaintenancePage() {
         navigate("Maintenance");
+        wait.until(
+                ExpectedConditions.visibilityOfAllElementsLocatedBy(By.className("orangehrm-card-container"))
+        );
         return new MaintenancePage(driver);
     }
 
