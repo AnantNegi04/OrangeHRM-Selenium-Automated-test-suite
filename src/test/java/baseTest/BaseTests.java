@@ -15,7 +15,7 @@ import java.util.Map;
 public class BaseTests {
     protected WebDriver driver;
     protected LoginPage loginPage;
-    private static final String BASE_URL = "https://opensource-demo.orangehrmlive.com/";
+    protected static final String BASE_URL = "https://opensource-demo.orangehrmlive.com/";
 
     @BeforeClass
     public void setUp() {
