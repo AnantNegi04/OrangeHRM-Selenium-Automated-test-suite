@@ -13,7 +13,7 @@ import java.util.List;
 public class TopBar {
     private WebDriver driver;
     private By upgradeButton = By.className("orangehrm-upgrade-button");
-    private By drowpDown = By.className("oxd-userdropdown-icon");
+    private By dropDown = By.className("oxd-userdropdown-icon");
     private By dropDownList = By.className("oxd-userdropdown-link");
     private WebDriverWait wait;
 
@@ -27,7 +27,9 @@ public class TopBar {
     }
 
     public void clickDropDown() {
-        driver.findElement(drowpDown).click();
+        wait.until(
+                ExpectedConditions.elementToBeClickable(dropDown)
+        ).click();
     }
 
     private By dropdownList(String item){
@@ -44,5 +46,9 @@ public class TopBar {
         );
 
         option.click();
+    }
+
+    public boolean isDropDownVisible() {
+        return !driver.findElements(dropDown).isEmpty();
     }
 }
