@@ -1,0 +1,12 @@
+<suite name="Suite">
+    <listeners>
+        <listener class-name="ExtentReports.TestListener"/>
+    </listeners>
+    <test name="Tests">
+        <classes>
+            <class name="HomePageTests.LoginPageTests"/>
+            <class name="SideBarTests.SideBarTests"/>
+            <class name="SideBarTests.AppNavigationTests"/>
+        </classes>
+    </test>
+</suite>
