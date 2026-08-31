@@ -27,7 +27,7 @@ public class BaseTests {
         options.setExperimentalOption("prefs", prefs);
         options.addArguments("--disable-features=PasswordLeakDetection,PasswordManagerOnboarding");
         options.addArguments("--incognito");
-        options.addArguments("--headless");
+        options.addArguments("--headless=new");
 
         driver = new ChromeDriver(options);
         driver.manage().window().maximize();
