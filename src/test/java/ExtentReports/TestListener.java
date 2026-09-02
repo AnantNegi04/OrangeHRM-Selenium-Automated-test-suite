@@ -24,8 +24,6 @@ public class TestListener implements ITestListener {
 
     @Override
     public void onTestStart(ITestResult result) {
-        WebDriver driver = new ChromeDriver();
-        result.setAttribute("driver", driver);
         ExtentTest test = ExtentManager.getInstance().createTest(result.getMethod().getMethodName());
         extentTestMap.put(Thread.currentThread().getId(), test);
     }

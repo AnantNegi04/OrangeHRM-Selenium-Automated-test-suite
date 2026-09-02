@@ -4,6 +4,7 @@ import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.testng.ITestContext;
 import org.testng.ITestListener;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -35,7 +36,8 @@ public class BaseTests {
     }
 
     @BeforeMethod
-    public void resetState() {
+    public void resetState(ITestContext context) {
+        context.setAttribute("driver", driver);
         driver.get(BASE_URL);
         driver.manage().deleteAllCookies();
         driver.get(BASE_URL);
