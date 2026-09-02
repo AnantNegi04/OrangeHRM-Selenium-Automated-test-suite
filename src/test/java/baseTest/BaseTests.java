@@ -4,6 +4,7 @@ import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.testng.ITestListener;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
@@ -30,7 +31,6 @@ public class BaseTests {
         options.addArguments("--headless=new");
 
         driver = new ChromeDriver(options);
-        driver.manage().window().maximize();
         loginPage = new LoginPage(driver);
     }
 
