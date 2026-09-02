@@ -57,7 +57,7 @@ public class TestListener implements ITestListener {
 
                 //creating File object from the string path
                 File destination = new File(path);
-
+                destination.getParentFile().mkdirs();
                 FileHandler.copy(src, destination);
             } catch (IOException e) {
                 e.printStackTrace();
