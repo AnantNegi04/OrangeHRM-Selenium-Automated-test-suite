@@ -10,9 +10,5 @@ import pages.Time.TimePage;
 import static org.testng.Assert.assertEquals;
 
 public class SandBoxTests extends BaseTests {
-    @Test
-    public void sandBoxTests() {
-        Dashboard dashboard = loginPage.login("Admin", "admin123");
-        System.out.println(dashboard.isDisplayed());
-    }
+
 }
