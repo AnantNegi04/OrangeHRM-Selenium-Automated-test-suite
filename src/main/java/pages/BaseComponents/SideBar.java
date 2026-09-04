@@ -36,7 +36,6 @@ public class SideBar extends BasePage{
     }
 
     private void expandSideBar() {
-        System.out.println(isSideBarExpanded());
         if (!isSideBarExpanded()) {
             wait.until(ExpectedConditions.elementToBeClickable(sideBarToggle)).click();
         }
