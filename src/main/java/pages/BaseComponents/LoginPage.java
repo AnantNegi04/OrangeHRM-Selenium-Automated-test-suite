@@ -70,7 +70,7 @@ public class LoginPage extends BasePage {
 
     public Dashboard login(String username, String password) {
         attemptLogin(username, password);
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".oxd-layout-context")));
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("oxd-layout-context")));
         return new Dashboard(driver);
     }
 
