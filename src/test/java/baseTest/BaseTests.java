@@ -30,6 +30,7 @@ public class BaseTests {
         options.addArguments("--disable-features=PasswordLeakDetection,PasswordManagerOnboarding");
         options.addArguments("--incognito");
         options.addArguments("--headless=new");
+        options.addArguments("--window-size=1920,1080");
 
         driver = new ChromeDriver(options);
         loginPage = new LoginPage(driver);
