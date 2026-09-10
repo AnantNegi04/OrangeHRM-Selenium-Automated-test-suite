@@ -1,7 +1,0 @@
-<suite name="Sandbox">
-    <test name="Sandbox">
-        <classes>
-            <class name="HomePageTests.SandBoxTests"/>
-        </classes>
-    </test>
-</suite>
