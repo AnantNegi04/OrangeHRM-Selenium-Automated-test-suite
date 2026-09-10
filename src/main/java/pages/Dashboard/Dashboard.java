@@ -5,6 +5,7 @@ import org.openqa.selenium.WebElement;
 import pages.BaseComponents.BasePage;
 import pages.BaseComponents.SideBar;
 import pages.BaseComponents.TopBar;
+import pages.Dashboard.Components.QuickLaunch;
 import pages.Leave.LeavePage;
 import pages.Maintenance.MaintenancePage;
 import pages.Time.TimePage;
@@ -22,24 +23,12 @@ public class Dashboard extends BasePage {
         return sideBar.goToLeavePage();
     }
 
-    public TimePage NavTime() {
-        SideBar sideBar = new SideBar(driver);
-        return sideBar.goToTimePage();
-    }
-
     public void logOut() {
         topBar = new TopBar(driver);
         topBar.getDropDownItem("Logout");
     }
 
-    public boolean isDisplayed() {
-        sideBar = new SideBar(driver);
-        return !sideBar.searchHasNoResults("Admin");
-    }
-
-    public boolean maintenancePage() {
-        sideBar = new SideBar(driver);
-        MaintenancePage page = sideBar.goToMaintenancePage();
-        return page.isPasswordConfirmationDisplayed();
+    public QuickLaunch quickLaunch() {
+        return new QuickLaunch(driver);
     }
 }
