@@ -81,7 +81,7 @@ public class QuickLaunchTests extends BaseTests {
         quickLaunch = new Dashboard(driver).quickLaunch();
 
         quickLaunch.navigateQuickLaunch("My Leave");
-        assertTrue(driver.getCurrentUrl().contains("/viewMyLeave"));
+        assertTrue(driver.getCurrentUrl().contains("/viewMyLeaveList"));
         sideBar.navigateToMenuItem("Dashboard");
         quickLaunch = new Dashboard(driver).quickLaunch();
 
