@@ -18,11 +18,6 @@ public class Dashboard extends BasePage {
         super(driver);
     }
 
-    public LeavePage Nav() {
-        SideBar sideBar = new SideBar(driver);
-        return sideBar.goToLeavePage();
-    }
-
     public void logOut() {
         topBar = new TopBar(driver);
         topBar.getDropDownItem("Logout");
