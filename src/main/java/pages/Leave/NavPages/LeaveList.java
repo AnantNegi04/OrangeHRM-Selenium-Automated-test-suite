@@ -1,9 +1,6 @@
 package pages.Leave.NavPages;
 
-import org.openqa.selenium.By;
-import org.openqa.selenium.Keys;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import pages.BaseComponents.BasePage;
 import pages.BaseComponents.SideBar;
@@ -27,12 +24,16 @@ public class LeaveList extends BasePage {
     private By toggleButton = By.xpath("//input[@type ='checkbox']");
     private By search = By.xpath("//button[@type='submit']");
     private By reset =  By.xpath("//button[@type='reset']");
+    private By records = By.xpath("//div[contains(@class, 'orangehrm-header-container')]//span");
 
     public LeaveList(WebDriver driver) {
         super(driver);
     }
 
     private WebElement getElements(By name) {
+        wait.until(
+                ExpectedConditions.visibilityOfElementLocated(name)
+        );
         return driver.findElement(name);
     }
 
@@ -104,11 +105,18 @@ public class LeaveList extends BasePage {
         option.click();
     }
 
-    public void setEmployeeName() {
-        getElements(employeeName).sendKeys("A");
+    private By getEmployeeNameDropdown(String employeeName) {
+        return By.xpath(
+                "//div[@role='listbox']" +
+                        "[normalize-space()='" + employeeName + "']"
+        );
+    }
+
+    public void setEmployeeName(String name) {
+        getElements(employeeName).sendKeys(name);
 
         WebElement firstName = wait.until(
-                ExpectedConditions.elementToBeClickable(autoComplete)
+                ExpectedConditions.elementToBeClickable(getEmployeeNameDropdown(name))
         );
 
         firstName.click();
@@ -131,18 +139,31 @@ public class LeaveList extends BasePage {
         element.click();
     }
 
+    public void clickToggleButton() {
+        getElements(toggleButton).click();
+    }
+
+    public String viewRecords() {
+        try {
+            return getElements(records).getText();
+        } catch (TimeoutException e) {
+            return "";
+        }
+    }
+
     public void clickResetButton() {
         getElements(reset).click();
     }
 
-    public void search(String fromDate, String toDate, String leaveStatus, String leaveType, String subUnit) {
+    public void search(String fromDate, String toDate, String leaveStatus, String leaveType, String name, String subUnit) {
         wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.className("oxd-layout-context")));
+
         enterFromDate(fromDate);
         enterToDate(toDate);
         selectDropDownLeaveStatus(leaveStatus);
         selectDropDownLeaveType(leaveType);
-        setEmployeeName();
-        enterSubunit(subUnit);
+        setEmployeeName(name);
+
         getElements(search).click();
     }
 
