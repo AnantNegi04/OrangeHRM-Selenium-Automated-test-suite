@@ -51,4 +51,9 @@ public class TopBar {
     public boolean isDropDownVisible() {
         return !driver.findElements(dropDown).isEmpty();
     }
+
+    public void logout() {
+        clickDropDown();
+        getDropDownItem("Logout");
+    }
 }
