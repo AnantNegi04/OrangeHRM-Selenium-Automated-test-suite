@@ -19,22 +19,39 @@ public class TopBarMenu extends BasePage {
         super(driver);
     }
 
+    private By topBarTab(String navTab) {
+        return By.xpath(
+                "//li[contains(@class, 'oxd-topbar-body-nav-tab')]" +
+                        "//a[normalize-space()='" + navTab + "']"
+        );
+    }
+
+    private By moreTab() {
+        return By.xpath(
+                "//li[contains(@class, 'oxd-topbar-body-nav-tab')]" +
+                        "//a[normalize-space()='More']"
+        );
+    }
+
+    private By dropdownItem(String navTab) {
+        return By.xpath(
+                "//a[contains(@class, 'oxd-topbar-body-nav-tab-link')]" +
+                        "[normalize-space()='" + navTab + "']"
+        );
+    }
+
     public WebElement getTopBarMenu(String navTab) {
         wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(topBarMenu));
 
-        List<WebElement> menuList = driver.findElements(topBarMenu);
-
-        for (WebElement menu : menuList) {
-            System.out.println(menu.getText());
-            if (menu.getText().equals(navTab)) {
-                return menu;
-            }
-
-            if (menu.getText().equals("More")) {
-                menu.click();
-                return getMoreOption(navTab);
-            }
+        if (!driver.findElements(topBarTab(navTab)).isEmpty()) {
+            return driver.findElement(topBarTab(navTab));
         }
+
+        if (!driver.findElements(moreTab()).isEmpty()) {
+            driver.findElement(moreTab()).click();
+            return getMoreOption(navTab);
+        }
+
         throw new NoSuchElementException(
                 "No such element exist " + navTab
         );
@@ -45,12 +62,10 @@ public class TopBarMenu extends BasePage {
 
         wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(menuDropdown));
 
-        List<WebElement> menuList = driver.findElements(menuDropdown);
-        for (WebElement menu : menuList) {
-            if (menu.getText().equals(navTab)) {
-                return menu;
-            }
+        if (!driver.findElements(dropdownItem(navTab)).isEmpty()) {
+            return driver.findElement(dropdownItem(navTab));
         }
+
         throw new NoSuchElementException(
                 "No such element exist " + navTab
         );
