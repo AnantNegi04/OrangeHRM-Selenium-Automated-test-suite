@@ -165,6 +165,14 @@ public class AssignLeave extends BasePage {
         return !driver.findElements(requiredFieldError(fieldLabel)).isEmpty();
     }
 
+    public String getFieldErrorText(String fieldLabel) {
+        return getElements(requiredFieldError(fieldLabel)).getText();
+    }
+
+    public void typeEmployeeNameWithoutSelecting(String text) {
+        getElements(employeeName).sendKeys(text);
+    }
+
 
     public boolean assignLeave(String leaveType, String FromDate, String ToDate, String eName, String comments) {
         wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.className("oxd-layout-context")));
