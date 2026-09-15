@@ -80,8 +80,8 @@ public class AssignLeave extends BasePage {
 
     private By employeeNameOption(String employeeName) {
         return By.xpath(
-                "//div[@role='listbox']" +
-                        "[normalize-space()='" + employeeName + "']"
+                "//div[@role='listbox']//div[@role='option']" +
+                        "[.//span[contains(normalize-space(), '" + employeeName + "')]]"
         );
     }
 
@@ -152,6 +152,17 @@ public class AssignLeave extends BasePage {
         } catch (TimeoutException e) {
             return false;
         }
+    }
+
+    private By requiredFieldError(String fieldLabel) {
+        return By.xpath(
+                "//label[normalize-space()='" + fieldLabel + "']/ancestor::div[contains(@class,'oxd-input-group')]" +
+                        "//span[contains(@class,'oxd-input-group__message')]"
+        );
+    }
+
+    public boolean isRequiredFieldErrorDisplayed(String fieldLabel) {
+        return !driver.findElements(requiredFieldError(fieldLabel)).isEmpty();
     }
 
 
