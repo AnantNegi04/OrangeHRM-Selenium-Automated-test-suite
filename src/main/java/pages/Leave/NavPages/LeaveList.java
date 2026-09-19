@@ -7,6 +7,8 @@ import pages.BaseComponents.SideBar;
 import pages.Leave.Components.TopBarMenu;
 import pages.Leave.LeavePage;
 
+import java.util.List;
+
 public class LeaveList extends BasePage {
 
     private TopBarMenu topBarMenu;
@@ -24,7 +26,13 @@ public class LeaveList extends BasePage {
     private By toggleButton = By.xpath("//input[@type ='checkbox']");
     private By search = By.xpath("//button[@type='submit']");
     private By reset =  By.xpath("//button[@type='reset']");
-    private By records = By.xpath("//div[contains(@class, 'orangehrm-header-container')]//span");
+    private By records = By.xpath( "//div[contains(@class, 'orangehrm-header-container')]//span[contains(@class, 'oxd-text oxd-text--span')]");
+    private By toastOutcome = By.xpath("//div[contains(@class,'oxd-toast')][contains(@class,'oxd-toast--')]");
+    private By toastTitle = By.xpath("//p[contains(@class,'oxd-text--toast-title')]");
+    private By selectAllCheckbox = By.xpath("//div[contains(@class, 'oxd-table-header')]//i[contains(@class, 'oxd-checkbox-input-icon')]");
+    private By cancelButton = By.xpath("//button[normalize-space()='Cancel']");
+    private By confirmCancelButton = By.xpath("//button[normalize-space()='Yes, Confirm']");
+    private By declineCancelButton = By.xpath("//button[normalize-space()='No, Cancel']");
 
     public LeaveList(WebDriver driver) {
         super(driver);
@@ -107,8 +115,8 @@ public class LeaveList extends BasePage {
 
     private By getEmployeeNameDropdown(String employeeName) {
         return By.xpath(
-                "//div[@role='listbox']" +
-                        "[normalize-space()='" + employeeName + "']"
+                "//div[@role='listbox']//div[@role='option']" +
+                        "[.//span[contains(normalize-space(), '" + employeeName + "')]]"
         );
     }
 
@@ -155,16 +163,85 @@ public class LeaveList extends BasePage {
         getElements(reset).click();
     }
 
+    public void selectAllRecords() {
+        wait.until(ExpectedConditions.presenceOfElementLocated(selectAllCheckbox)).click();
+    }
+
+    public void clickCancel() {
+        getElements(cancelButton).click();
+    }
+
+    public void confirmCancel() {
+        getElements(confirmCancelButton).click();
+    }
+
+    public void declineCancel() {
+        getElements(declineCancelButton).click();
+    }
+
+    private String getToastTitle() {
+        try {
+            return wait.until(ExpectedConditions.visibilityOfElementLocated(toastTitle)).getText();
+        } catch (TimeoutException e) {
+            return "";
+        }
+    }
+
+    public boolean isCancelSuccessful() {
+        List<WebElement> titles = driver.findElements(toastTitle);
+        for (WebElement title : titles) {
+            if (title.getText().equalsIgnoreCase("Success")) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean cancelAllFoundRecords() {
+        selectAllRecords();
+
+        boolean cancelAvailable;
+        try {
+            cancelAvailable = wait.until(d -> !d.findElements(cancelButton).isEmpty());
+        } catch (TimeoutException e) {
+            cancelAvailable = false;
+        }
+
+        if (!cancelAvailable) {
+            return false;
+        }
+
+        clickCancel();
+        confirmCancel();
+        return isCancelSuccessful();
+    }
+
+    // NOTE: "Cancel button never appears" covers two distinct real-world cases —
+    // zero matching records, or records that exist but are already partially
+    // consumed and therefore locked from cancellation. This test suite only ever
+    // creates fresh, fully-future leave (never yet started), so the second case
+    // should never actually arise here — but a caller reusing this method against
+    // arbitrary, pre-existing data should not assume `false` means "nothing found."
+
     public void search(String fromDate, String toDate, String leaveStatus, String leaveType, String name, String subUnit) {
         wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.className("oxd-layout-context")));
+
+        String oldRecord = driver.findElements(records).isEmpty() ? null : driver.findElement(records).getText();
 
         enterFromDate(fromDate);
         enterToDate(toDate);
         selectDropDownLeaveStatus(leaveStatus);
         selectDropDownLeaveType(leaveType);
         setEmployeeName(name);
-
         getElements(search).click();
+
+        if (oldRecord != null && oldRecord.equalsIgnoreCase("No Records Found")) {
+            try{
+                wait.until(ExpectedConditions.not(ExpectedConditions.textToBe(records, "No Records Found")));
+            } catch (TimeoutException e) {
+                System.out.println(e.getMessage());
+            }
+        }
     }
 
 }
