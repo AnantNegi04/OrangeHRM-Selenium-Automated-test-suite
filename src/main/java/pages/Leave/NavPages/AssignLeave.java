@@ -27,6 +27,7 @@ public class AssignLeave extends BasePage {
     private By overlappingTitle = By.xpath("//h6[normalize-space()='Overlapping Leave Request(s) Found']");
     //private By recordsFound = By.xpath("//span[contains(@class, 'oxd-text--span')][text()=' (5) Records Found']");
     private By overlappingRecords = By.xpath("//div[contains(@class, 'oxd-table-card')]");
+    private By toastOutcome = By.xpath("//div[contains(@class,'oxd-toast')][contains(@class,'oxd-toast--')]");
 
     public AssignLeave(WebDriver driver) {
         super(driver);
@@ -173,9 +174,20 @@ public class AssignLeave extends BasePage {
         getElements(employeeName).sendKeys(text);
     }
 
+    private boolean isAssignmentSuccessful() {
+        try {
+            String classes = wait.until(ExpectedConditions.visibilityOfElementLocated(toastOutcome)).getAttribute("class");
+            return classes.contains("oxd-toast--success");
+        } catch (TimeoutException e) {
+            return false;
+        }
+    }
 
     public boolean assignLeave(String leaveType, String FromDate, String ToDate, String eName, String comments) {
-        wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.className("oxd-layout-context")));
+        wait.until(
+                ExpectedConditions.visibilityOfElementLocated(By.className("oxd-layout-context"))
+        );
+
         setEmployeeName(eName);
         selectDropDownLeaveType(leaveType);
         enterFromDate(FromDate);
@@ -183,13 +195,17 @@ public class AssignLeave extends BasePage {
         enterComments(comments);
         clickSubmit();
 
+        if (isRequiredFieldErrorDisplayed("Leave Type")
+                || isRequiredFieldErrorDisplayed("From Date")
+                || isRequiredFieldErrorDisplayed("To Date")
+                || isRequiredFieldErrorDisplayed("Employee Name")) {
+            return false;
+        }
+
         if (isInsufficientBalanceDialogDisplayed()) {
             clickConfirm();
         }
 
-        if (isOverlapping()) {
-            return false;
-        }
-        return true;
+        return isAssignmentSuccessful();
     }
 }
