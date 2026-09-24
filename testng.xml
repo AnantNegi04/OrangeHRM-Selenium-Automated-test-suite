@@ -8,6 +8,7 @@
             <class name="SideBarTests.SideBarTests"/>
             <class name="SideBarTests.AppNavigationTests"/>
             <class name="QuickLaunchTests.QuickLaunchTests"/>
+            <class name="AssignLeaveTests.AssignLeaveTests"/>
         </classes>
     </test>
 </suite>
