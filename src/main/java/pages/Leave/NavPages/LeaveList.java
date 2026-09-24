@@ -188,13 +188,14 @@ public class LeaveList extends BasePage {
     }
 
     public boolean isCancelSuccessful() {
-        List<WebElement> titles = driver.findElements(toastTitle);
-        for (WebElement title : titles) {
-            if (title.getText().equalsIgnoreCase("Success")) {
-                return true;
-            }
+        try {
+            return wait.until(d -> {
+                List<WebElement> titles = d.findElements(toastTitle);
+                return titles.stream().anyMatch(title -> title.getText().equalsIgnoreCase("Success"));
+            });
+        } catch (TimeoutException e) {
+            return false;
         }
-        return false;
     }
 
     public boolean cancelAllFoundRecords() {
