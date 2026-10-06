@@ -12,7 +12,6 @@ import pages.Leave.NavPages.LeaveList;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.testng.Assert.*;
 import static org.testng.Assert.assertFalse;
@@ -105,7 +104,7 @@ public class AssignLeaveTests extends BaseTests {
 
         LeaveList leaveList = new SideBar(driver).goToLeavePage().goToLeaveList();
         leaveList.search(from, to, "Scheduled", VALID_LEAVE_TYPE, employeeName, "");
-        leaveList.cancelAllFoundRecords();
+        assertTrue(leaveList.cancelAllFoundRecords(), "Cleanup should succeed");
     }
 
     @Test(description = "From Date equal to To Date (single-day boundary) is accepted")
@@ -115,8 +114,8 @@ public class AssignLeaveTests extends BaseTests {
         assertTrue(result, "A single-day leave request should be accepted");
 
         LeaveList leaveList = new SideBar(driver).goToLeavePage().goToLeaveList();
-        leaveList.search(from, to, "Scheduled", VALID_LEAVE_TYPE, employeeName, "");
-        leaveList.cancelAllFoundRecords();
+        leaveList.search(from, from, "Scheduled", VALID_LEAVE_TYPE, employeeName, "");
+        assertTrue(leaveList.cancelAllFoundRecords(), "Cleanup should succeed");
     }
 
     @Test(description = "To Date before From Date is rejected")
@@ -139,8 +138,8 @@ public class AssignLeaveTests extends BaseTests {
         assertTrue(result, "A date range ending on the last valid day should be accepted");
 
         LeaveList leaveList = new SideBar(driver).goToLeavePage().goToLeaveList();
-        leaveList.search(from, to, "Scheduled", VALID_LEAVE_TYPE, employeeName, "");
-        leaveList.cancelAllFoundRecords();
+        leaveList.search(YEAR_LIMIT_BOUNDARY_FROM, YEAR_LIMIT_BOUNDARY_TO, "Scheduled", VALID_LEAVE_TYPE, employeeName, "");
+        assertTrue(leaveList.cancelAllFoundRecords(), "Cleanup should succeed");
     }
 
     @Test(description = "A date range beyond the application's year limit is rejected")
@@ -163,7 +162,7 @@ public class AssignLeaveTests extends BaseTests {
 
         LeaveList leaveList = new SideBar(driver).goToLeavePage().goToLeaveList();
         leaveList.search(from, to, "Scheduled", VALID_LEAVE_TYPE, employeeName, "");
-        leaveList.cancelAllFoundRecords();
+        assertTrue(leaveList.cancelAllFoundRecords(), "Cleanup should succeed");
     }
 
     @Test(description = "Submitting the same employee, type, and date range twice in one session triggers the overlap warning")
@@ -182,6 +181,6 @@ public class AssignLeaveTests extends BaseTests {
 
         LeaveList leaveList = new SideBar(driver).goToLeavePage().goToLeaveList();
         leaveList.search(from, to, "Scheduled", VALID_LEAVE_TYPE, employeeName, "");
-        leaveList.cancelAllFoundRecords();
+        assertTrue(leaveList.cancelAllFoundRecords(), "Cleanup should succeed");
     }
 }
