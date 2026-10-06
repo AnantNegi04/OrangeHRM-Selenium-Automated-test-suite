@@ -10,16 +10,15 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import java.time.Duration;
 import java.util.List;
 
-public class TopBar {
-    private WebDriver driver;
+public class TopBar extends BasePage{
+
     private By upgradeButton = By.className("orangehrm-upgrade-button");
     private By dropDown = By.className("oxd-userdropdown-icon");
     private By dropDownList = By.className("oxd-userdropdown-link");
-    private WebDriverWait wait;
+
 
     public TopBar(WebDriver driver) {
-        this.driver = driver;
-        wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+        super(driver);
     }
 
     public void clickUpgradePage() {
