@@ -1,6 +1,7 @@
 package AssignLeaveTests;
 
 import baseTest.BaseTests;
+import baseTest.RetryAnalyzer;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -96,7 +97,8 @@ public class AssignLeaveTests extends BaseTests {
                 "Expected a distinct 'Invalid' style message, not the generic Required error");
     }
 
-    @Test(description = "A valid, multi-day leave request is accepted")
+    @Test( retryAnalyzer = RetryAnalyzer.class,
+            description = "A valid, multi-day leave request is accepted")
     public void validAssignmentSucceeds() {
         String employeeName = selectPooledEmployee();
         boolean result = assignLeave.assignLeave(VALID_LEAVE_TYPE, from, to, employeeName, "Leave");
@@ -107,7 +109,8 @@ public class AssignLeaveTests extends BaseTests {
         assertTrue(leaveList.cancelAllFoundRecords(), "Cleanup should succeed");
     }
 
-    @Test(description = "From Date equal to To Date (single-day boundary) is accepted")
+    @Test( retryAnalyzer = RetryAnalyzer.class,
+            description = "From Date equal to To Date (single-day boundary) is accepted")
     public void fromDateEqualsToDateIsAccepted() {
         String employeeName = selectPooledEmployee();
         boolean result = assignLeave.assignLeave(VALID_LEAVE_TYPE, from, from, employeeName, "Leave");
@@ -131,7 +134,8 @@ public class AssignLeaveTests extends BaseTests {
         assertFalse(result, "A non-date string should not result in a successful assignment");
     }
 
-    @Test(description = "A date range ending exactly at the application's year limit boundary is accepted")
+    @Test( retryAnalyzer = RetryAnalyzer.class,
+            description = "A date range ending exactly at the application's year limit boundary is accepted")
     public void dateRangeAtYearLimitBoundaryIsAccepted() {
         String employeeName = selectPooledEmployee();
         boolean result = assignLeave.assignLeave(VALID_LEAVE_TYPE, YEAR_LIMIT_BOUNDARY_FROM, YEAR_LIMIT_BOUNDARY_TO, employeeName, "Leave");
@@ -165,7 +169,8 @@ public class AssignLeaveTests extends BaseTests {
         assertTrue(leaveList.cancelAllFoundRecords(), "Cleanup should succeed");
     }
 
-    @Test(description = "Submitting the same employee, type, and date range twice in one session triggers the overlap warning")
+    @Test( retryAnalyzer = RetryAnalyzer.class,
+            description = "Submitting the same employee, type, and date range twice in one session triggers the overlap warning")
     public void duplicateAssignmentTriggersOverlapWarning() {
         String employeeName = selectPooledEmployee();
 
